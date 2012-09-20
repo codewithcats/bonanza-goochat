@@ -1,13 +1,16 @@
 <h1>GooChat Beta</h1>
 <div class="chatLog"></div>
 <div class="chatActions">
+	<span id="name">?</span>
 	<input type="text" name="sayText" />
 	<button id="sayBtn">Shout Out Loud!</button>
 </div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="/javascripts/jquery-1.8.1.min.js"></script>
 <script>
 	var socket = io.connect();
-	socket.on('id', function(a) {
-		console.log(a.id);
+	socket.on('id', function(data) {
+		console.log(data.id);
+		$('#name').html(data.id);
 	});
 </script>
