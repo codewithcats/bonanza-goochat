@@ -11,20 +11,21 @@
 <script src="/javascripts/jquery-1.8.1.min.js"></script>
 <script>
 	var socket = io.connect();
+	var id;
 	socket.on('id', function(data) {
-		console.log(data.id);
+		id = data.id;
 		$('#name').html(data.id);
 	});
 
 	socket.on('pushMsg', function(data) {
-		$('#chatLog').append('<li>' + data.msg + '</li>');
-		alert(data.msg);
+		$('#chatLog').append('<li><strong>' + data.id + '</strong> said: ' + data.msg + '</li>');
 	});
 
 	$('#sayBtn').click(function() {
 		var msg = $('#sayText').val();
 		socket.emit('msg', {
-			'msg': msg
+			'msg': msg,
+			'id': id
 		});
 	});
 </script>
