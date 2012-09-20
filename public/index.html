@@ -1,8 +1,10 @@
 <h1>GooChat Beta</h1>
-<div class="chatLog"></div>
+<ul id="chatLog">
+	
+</ul>
 <div class="chatActions">
 	<span id="name">?</span>
-	<input type="text" name="sayText" />
+	<input type="text" id="sayText" />
 	<button id="sayBtn">Shout Out Loud!</button>
 </div>
 <script src="/socket.io/socket.io.js"></script>
@@ -12,5 +14,16 @@
 	socket.on('id', function(data) {
 		console.log(data.id);
 		$('#name').html(data.id);
+	});
+
+	socket.on('pushMsg', function(data) {
+		$('#chatLog').append('<li>' + data.msg + '</li>');
+	});
+
+	$('#sayBtn').click(function() {
+		var msg = $('#sayText').val();
+		socket.emit('msg', {
+			'msg': msg
+		});
 	});
 </script>
