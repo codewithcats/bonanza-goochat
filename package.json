@@ -1,0 +1,9 @@
+{
+	"name": "goochat",
+	"version": "0.0.1",
+	"description": "Goo ja chat",
+	"dependencies": {
+		"socket.io": "~0.9.10",
+		"mime": "~1.2.7"
+	}
+}
