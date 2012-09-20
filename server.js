@@ -3,27 +3,29 @@ var mime = require('mime');
 var fs = require('fs');
 
 var server = http.createServer(function(req, resp) {
-	var url = req.url;
-	var filePath;
-	if(url == '/') {
-		filePath = './public/index.html';
-	} else {
-		filePath = './public' + url;
-	}
-	
+	var filePath = buildFilePath(req);
 	fs.exists(filePath, function(exists) {
 		if(exists) {
-			fs.readFile(filePath, function(err, data) {
-				var mimeType = mime.lookup(filePath);
-				resp.writeHead('content-type', mimeType);
-				resp.end(data);
-			});
+			fs.readFile(filePath, sendStatic);
 		} else {
 			send404(resp);
 		}
-	})
+	});
 
-	
+	function buildFilePath(req) {
+		var url = req.url;
+		if(url == '/') {
+			return './public/index.html';
+		} else {
+			return './public' + url;
+		}
+	}
+
+	function sendStatic(err, data) {
+		var mimeType = mime.lookup(filePath);
+		resp.writeHead('content-type', mimeType);
+		resp.end(data);
+	}
 });
 
 server.listen(3000, function() {
