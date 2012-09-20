@@ -18,6 +18,7 @@
 
 	socket.on('pushMsg', function(data) {
 		$('#chatLog').append('<li>' + data.msg + '</li>');
+		alert(data.msg);
 	});
 
 	$('#sayBtn').click(function() {
