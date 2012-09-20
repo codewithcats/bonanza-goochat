@@ -38,3 +38,6 @@ function send404(resp) {
 	});
 	resp.end('404');
 }
+
+var chatServer = require('./lib/chat_server');
+chatServer.listen(server);

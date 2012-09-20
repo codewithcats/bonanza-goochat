@@ -1,1 +1,13 @@
 <h1>GooChat Beta</h1>
+<div class="chatLog"></div>
+<div class="chatActions">
+	<input type="text" name="sayText" />
+	<button id="sayBtn">Shout Out Loud!</button>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	var socket = io.connect();
+	socket.on('id', function(a) {
+		console.log(a.id);
+	});
+</script>
