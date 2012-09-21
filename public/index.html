@@ -15,18 +15,38 @@
 	<input type="text" id="sayText" />
 	<button id="sayBtn">Shout Out Loud!</button>
 </div>
+<div class="pref">
+	Change name to: <input type="text" id="nameChangeTxt" /> <button id="nameChangeBtn">Change</button>
+</div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/javascripts/jquery-1.8.1.min.js"></script>
 <script>
 	var socket = io.connect();
 	var id;
-	socket.on('id', function(data) {
+	socket.on('id', onIdChanged);
+
+	function onIdChanged(data) {
 		id = data.id;
 		$('#name').html(data.id);
-	});
+	}
 
 	socket.on('pushMsg', function(data) {
 		$('#chatLog').append('<li><strong>' + data.id + '</strong> said: ' + data.msg + '</li>');
+	});
+
+	socket.on('changeIdResult', function(data) {
+		if(data.success) {
+			id = data.newId;
+			onIdChanged({
+				'id': id
+			});
+			return;
+		}
+		alert('Name already in used.');
+	});
+
+	socket.on('idChanged', function(data) {
+		$('#chatLog').append('<li><strong>' + data.oldId + '</strong> has changed name to: ' + data.newId + '</li>');
 	});
 
 	$('#sayBtn').click(emitMsg);
@@ -49,4 +69,16 @@
 		});
 		$sayText.val('');
 	}
+
+	$('#nameChangeBtn').click(function() {
+		var newId = $('#nameChangeTxt').val();
+		if(!!newId == false) {
+			alert('Enter your new name!!');
+			return;
+		}
+		socket.emit('changeId', {
+			'oldId': id,
+			'newId': newId
+		});
+	});
 </script>
