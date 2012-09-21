@@ -1,4 +1,12 @@
 <h1>GooChat Beta</h1>
+<div>
+	<h2>Announcement</h2>
+	<ul>
+		<li>Click enter to send message</li>
+		<li>Cannot send empty message</li>
+	</ul>
+</div>
+<h2>Chat Log</h2>
 <ul id="chatLog">
 	
 </ul>
@@ -21,11 +29,24 @@
 		$('#chatLog').append('<li><strong>' + data.id + '</strong> said: ' + data.msg + '</li>');
 	});
 
-	$('#sayBtn').click(function() {
-		var msg = $('#sayText').val();
+	$('#sayBtn').click(emitMsg);
+
+	var $sayText = $('#sayText').keyup(function(e) {
+		if(e.keyCode === 13) {
+			emitMsg();
+		}
+	});
+
+	function emitMsg() {
+		var msg = $sayText.val();
+		if(!!msg == false) {
+			alert('Enter your message!!');
+			return;
+		}
 		socket.emit('msg', {
 			'msg': msg,
 			'id': id
 		});
-	});
+		$sayText.val('');
+	}
 </script>
