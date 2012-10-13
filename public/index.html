@@ -12,11 +12,8 @@
 		<script type="text/javascript">
 			$(function() {
 				// this initialises the demo scollpanes on the page.
-				$('#chatLogPane').jScrollPane({
-					animateTo : true
-				});
+				$('#chatLogPane').jScrollPane();
 			});
-
 		</script>
 	</head>
 	<body>
@@ -53,12 +50,12 @@
 
 		<h2>Chat Log</h2>
 		<div id="chatLogPane" class="scroll-pane" style="width: 500px; height: 300px;float: none">
-			<ul id="chatLog" style="list-style: none;padding-left: 0"></ul>
+			<ul id="chatLog" style="padding-left: 0px; list-style-type: none"></ul>
 		</div>
 
 		<div class="chatActions">
 			<span id="name">?</span>
-			<input type="text" id="sayText" style="width: 350px" />
+			<input type="text" id="sayText" style="width: 200px" />
 			<button id="sayBtn">
 				Send
 			</button>
@@ -80,7 +77,7 @@
 
 			socket.on('pushMsg', function(data) {
 				$('#chatLog').append('<li><strong>' + data.id + '</strong> : ' + data.msg + '</li>');
-				$('#chatLogPane').scrollTo($('#chatLogPane').data('jScrollPaneMaxScroll'));
+				$("#chatLogPane").scrollTop($("#chatLog")[0].scrollHeight);
 			});
 
 			socket.on('changeIdResult', function(data) {
