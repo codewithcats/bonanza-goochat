@@ -1,84 +1,136 @@
-<h1>GooChat Beta</h1>
-<div>
-	<h2>Announcement</h2>
-	<ul>
-		<li>Press <strong>Enter</strong> to send message</li>
-		<li>Cannot send empty message</li>
-	</ul>
-</div>
-<h2>Chat Log</h2>
-<ul id="chatLog">
-	
-</ul>
-<div class="chatActions">
-	<span id="name">?</span>
-	<input type="text" id="sayText" />
-	<button id="sayBtn">Shout Out Loud!</button>
-</div>
-<div class="pref">
-	Change name to: <input type="text" id="nameChangeTxt" /> <button id="nameChangeBtn">Change</button>
-</div>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/javascripts/jquery-1.8.1.min.js"></script>
-<script>
-	var socket = io.connect();
-	var id;
-	socket.on('id', onIdChanged);
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<title>GooChat Beta</title>
 
-	function onIdChanged(data) {
-		id = data.id;
-		$('#name').html(data.id);
-	}
-
-	socket.on('pushMsg', function(data) {
-		$('#chatLog').append('<li><strong>' + data.id + '</strong> said: ' + data.msg + '</li>');
-	});
-
-	socket.on('changeIdResult', function(data) {
-		if(data.success) {
-			id = data.newId;
-			onIdChanged({
-				'id': id
+		<script type="text/javascript" src="/javascripts/jquery.mousewheel.js"></script>
+		<script type="text/javascript" src="/javascripts/jquery.em.js"></script>
+		<script type="text/javascript" src="/javascripts/jScrollPane.js"></script>
+		<link rel="stylesheet" type="text/css" media="all" href="/stylesheets/jScrollPane.css" />
+		<link rel="stylesheet" type="text/css" media="all" href="/stylesheets/demoStyles.css" />
+		<script type="text/javascript">
+			$(function() {
+				// this initialises the demo scollpanes on the page.
+				$('#chatLogPane').jScrollPane();
 			});
-			return;
-		}
-		alert('Name already in used.');
-	});
+		</script>
+	</head>
+	<body>
 
-	socket.on('idChanged', function(data) {
-		$('#chatLog').append('<li><strong>' + data.oldId + '</strong> has changed name to: ' + data.newId + '</li>');
-	});
+		<h1>GooChat Beta</h1>
+		<div>
+			<h2>Announcement</h2>
+			<ul>
+				<li>
+					Press <strong>Enter</strong> to send message
+				</li>
+				<li>
+					Cannot send empty message
+				</li>
+			</ul>
+		</div>
 
-	$('#sayBtn').click(emitMsg);
+		<h2>Wealth Station</h2>
+		<div id="radio">
+			<audio controls="controls">
+				<source src="http://localhost:8000" type="audio/mpeg">
+				<embed height="50" width="100" src="http://localhost:8000">
+			</audio>
+		</div>
 
-	var $sayText = $('#sayText').keyup(function(e) {
-		if(e.keyCode === 13) {
-			emitMsg();
-		}
-	});
+		<h2>Profile</h2>
+		<div class="pref">
+			Change name to:
+			<input type="text" id="nameChangeTxt" />
+			<button id="nameChangeBtn">
+				Change
+			</button>
+		</div>
 
-	function emitMsg() {
-		var msg = $sayText.val();
-		if(!!msg == false) {
-			alert('Enter your message!!');
-			return;
-		}
-		socket.emit('msg', {
-			'msg': msg,
-			'id': id
-		});
-		$sayText.val('');
-	}
+		<h2>Chat Log</h2>
+		<div id="chatLogPane" class="scroll-pane" style="width: 500px; height: 300px;float: none">
+			<ul id="chatLog" style="padding-left: 0px; list-style-type: none"></ul>
+		</div>
 
-	$('#nameChangeBtn').click(function() {
-		var newId = $('#nameChangeTxt').val();
-		if(!!newId == false) {
-			alert('Enter your new name!!');
-			return;
-		}
-		socket.emit('changeId', {
-			'oldId': id,
-			'newId': newId
-		});
-	});
-</script>
+		<div class="chatActions">
+			<span id="name">?</span>
+			<input type="text" id="sayText" style="width: 200px" />
+			<button id="sayBtn">
+				Send
+			</button>
+		</div>
+
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/javascripts/jquery-1.8.1.min.js"></script>
+
+		<script>
+			var socket = io.connect();
+			var id;
+			socket.on('id', onIdChanged);
+
+			function onIdChanged(data) {
+				id = data.id;
+				$('#name').html(data.id);
+			}
+
+
+			socket.on('pushMsg', function(data) {
+				$('#chatLog').append('<li><strong>' + data.id + '</strong> : ' + data.msg + '</li>');
+				$("#chatLogPane").scrollTop($("#chatLog")[0].scrollHeight);
+			});
+
+			socket.on('changeIdResult', function(data) {
+				if (data.success) {
+					id = data.newId;
+					onIdChanged({
+						'id' : id
+					});
+					return;
+				}
+				alert('Name already in used.');
+			});
+
+			socket.on('idChanged', function(data) {
+				$('#chatLog').append('<li><strong>' + data.oldId + '</strong> has changed name to: ' + data.newId + '</li>');
+			});
+
+			$('#sayBtn').click(emitMsg);
+
+			var $sayText = $('#sayText').keyup(function(e) {
+				if (e.keyCode === 13) {
+					emitMsg();
+				}
+			});
+
+			function emitMsg() {
+				var msg = $sayText.val();
+				if (!!msg == false) {
+					alert('Enter your message!!');
+					return;
+				}
+				socket.emit('msg', {
+					'msg' : msg,
+					'id' : id
+				});
+				$sayText.val('');
+			}
+
+
+			$('#nameChangeBtn').click(function() {
+				var newId = $('#nameChangeTxt').val();
+				if (!!newId == false) {
+					alert('Enter your new name!!');
+					return;
+				}
+				socket.emit('changeId', {
+					'oldId' : id,
+					'newId' : newId
+				});
+			});
+
+		</script>
+
+	</body>
+</html>
+
